@@ -76,7 +76,31 @@ export function initApp(): void {
 
             <!-- Result Content -->
             <div id="resultContent" class="hidden">
-              <div id="resultText" class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed"></div>
+              <div id="resultText" class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed mb-4"></div>
+              <!-- E-commerce Search Buttons -->
+              <div id="searchSection" class="hidden border-t pt-4 mt-4">
+                <p class="text-sm text-gray-600 mb-3">在电商平台搜索相关药品：</p>
+                <div class="flex flex-wrap gap-2">
+                  <button id="searchTaobao" class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-3.215-.755c-.64-.15-.655-.64.136-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/>
+                    </svg>
+                    淘宝搜索
+                  </button>
+                  <button id="searchJD" class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    京东搜索
+                  </button>
+                  <button id="searchAlibaba" class="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M4.833 8.09c-.935 0-1.75.428-2.263 1.09l-.31.397v5.823l.31.398c.513.661 1.328 1.09 2.263 1.09h11.334c.935 0 1.75-.429 2.263-1.09l.31-.398v-5.823l-.31-.397c-.513-.662-1.328-1.09-2.263-1.09H4.833zm0 2.18h11.334c.467 0 .875.214 1.132.544l.31.398v5.823l-.31.397c-.257.33-.665.544-1.132.544H4.833c-.467 0-.875-.214-1.132-.544l-.31-.397v-5.823l.31-.398c.257-.33.665-.544 1.132-.544z"/>
+                    </svg>
+                    1688搜索
+                  </button>
+                </div>
+              </div>
             </div>
 
             <!-- Error State -->
@@ -238,6 +262,47 @@ function initUploadLogic(): void {
     identifyBtn.disabled = false;
   }
 
+  // Search section and buttons
+  const searchSection = document.getElementById('searchSection') as HTMLDivElement;
+  const searchTaobao = document.getElementById('searchTaobao') as HTMLButtonElement;
+  const searchJD = document.getElementById('searchJD') as HTMLButtonElement;
+  const searchAlibaba = document.getElementById('searchAlibaba') as HTMLButtonElement;
+
+  // Extract keywords from result text
+  function extractKeywords(text: string): string {
+    // Match content between brackets like [阿维菌素] [吡虫啉]
+    const bracketMatches = text.match(/\[([^\]]+)\]/g);
+    if (bracketMatches && bracketMatches.length > 0) {
+      return bracketMatches.map(m => m.slice(1, -1)).join(' ');
+    }
+    // Extract disease/pest name from the text
+    const diseaseMatch = text.match(/\*\*病虫害名称\*\*[：:]\s*\*\*(.+?)\*\*/);
+    if (diseaseMatch) {
+      return diseaseMatch[1];
+    }
+    // Fallback: return general plant protection keyword
+    return '植物农药 杀虫剂 杀菌剂';
+  }
+
+  // Search button handlers
+  searchTaobao.addEventListener('click', () => {
+    const keywords = extractKeywords(resultText.textContent || '');
+    const url = `https://s.taobao.com/search?q=${encodeURIComponent(keywords)}`;
+    window.open(url, '_blank');
+  });
+
+  searchJD.addEventListener('click', () => {
+    const keywords = extractKeywords(resultText.textContent || '');
+    const url = `https://search.jd.com/Search?keyword=${encodeURIComponent(keywords)}`;
+    window.open(url, '_blank');
+  });
+
+  searchAlibaba.addEventListener('click', () => {
+    const keywords = extractKeywords(resultText.textContent || '');
+    const url = `https://s.1688.com/joffer/searchbar/keyword_search.htm?keywords=${encodeURIComponent(keywords)}`;
+    window.open(url, '_blank');
+  });
+
   async function performIdentification(imageBase64: string): Promise<void> {
     const response = await fetch('/api/identify', {
       method: 'POST',
@@ -251,6 +316,9 @@ function initUploadLogic(): void {
       throw new Error('识别请求失败');
     }
 
+    // Hide search section while processing
+    searchSection.classList.add('hidden');
+
     // Use SSE for streaming
     const reader = response.body?.getReader();
     if (!reader) {
@@ -259,20 +327,38 @@ function initUploadLogic(): void {
 
     const decoder = new TextDecoder();
     let result = '';
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value, { stream: true });
-      result += chunk;
-      // Update result in real-time (typewriter effect)
-      resultText.textContent = result;
+      buffer += decoder.decode(value, { stream: true });
       
-      // Show result container
-      loadingState.classList.add('hidden');
-      errorState.classList.add('hidden');
-      resultContent.classList.remove('hidden');
+      // Process complete SSE events
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') {
+            // Show search section when complete
+            searchSection.classList.remove('hidden');
+            return;
+          }
+          result += data;
+          // Update result in real-time (typewriter effect)
+          resultText.textContent = result;
+          
+          // Show result container
+          loadingState.classList.add('hidden');
+          errorState.classList.add('hidden');
+          resultContent.classList.remove('hidden');
+        }
+      }
     }
+    // Show search section when complete
+    searchSection.classList.remove('hidden');
   }
 }

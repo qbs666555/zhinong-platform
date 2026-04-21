@@ -38,7 +38,8 @@ router.post('/api/identify', async (req: Request, res: Response) => {
 2. **受害程度**：轻微/中等/严重
 3. **识别依据**：图片中观察到的主要特征
 4. **防治建议**：包括农业防治、物理防治、生物防治、化学防治等方法
-5. **预防措施**：如何预防类似问题再次发生
+5. **推荐药品关键词**：列出2-3个主要的防治药品通用名称或有效成分关键词（用于电商搜索），格式：[药品关键词1] [药品关键词2] [药品关键词3]
+6. **预防措施**：如何预防类似问题再次发生
 
 如果没有发现明显病虫害，请说明图片中植物的生长状态，并给出养护建议。
 
@@ -67,13 +68,15 @@ router.post('/api/identify', async (req: Request, res: Response) => {
       temperature: 0.7,
     });
 
-    // Stream response to client
+    // Stream response to client using SSE format
     for await (const chunk of stream) {
       if (chunk.content && !res.writableEnded) {
-        res.write(chunk.content.toString());
+        const data = 'data: ' + chunk.content.toString() + '\n\n';
+        res.write(data);
       }
     }
 
+    res.write('data: [DONE]\n\n');
     res.end();
   } catch (error) {
     console.error('LLM API Error:', error);
