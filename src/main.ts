@@ -157,6 +157,33 @@ export function initApp(): void {
           </div>
         </div>
 
+        <!-- History Section -->
+        <div id="historySection" class="hidden mt-8">
+          <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                历史记录
+              </h2>
+              <button id="clearHistoryBtn" class="text-sm text-red-500 hover:text-red-700 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                清空历史
+              </button>
+            </div>
+            <div id="historyList" class="space-y-3 max-h-80 overflow-y-auto"></div>
+            <div id="historyEmpty" class="hidden text-center py-8 text-gray-400">
+              <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <p>暂无历史记录</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Tips -->
         <div class="mt-10 bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100">
           <div class="flex items-start gap-4">
@@ -488,4 +515,162 @@ function initUploadLogic(): void {
   function hideStoreLoading(): void {
     storeLoading.classList.add('hidden');
   }
+
+  // History Management
+  const HISTORY_KEY = 'disease_recognition_history';
+  const MAX_HISTORY = 20;
+
+  interface HistoryItem {
+    id: string;
+    image: string;
+    result: string;
+    time: string;
+  }
+
+  const historySection = document.getElementById('historySection') as HTMLDivElement;
+  const historyList = document.getElementById('historyList') as HTMLDivElement;
+  const historyEmpty = document.getElementById('historyEmpty') as HTMLDivElement;
+  const clearHistoryBtn = document.getElementById('clearHistoryBtn') as HTMLButtonElement;
+
+  function loadHistory(): HistoryItem[] {
+    try {
+      const data = localStorage.getItem(HISTORY_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveHistory(history: HistoryItem[]): void {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    } catch (e) {
+      console.error('Failed to save history:', e);
+    }
+  }
+
+  function addToHistory(image: string, result: string): void {
+    const history = loadHistory();
+    const newItem: HistoryItem = {
+      id: Date.now().toString(),
+      image,
+      result,
+      time: new Date().toLocaleString('zh-CN')
+    };
+    history.unshift(newItem);
+    if (history.length > MAX_HISTORY) {
+      history.pop();
+    }
+    saveHistory(history);
+    renderHistory();
+  }
+
+  function renderHistory(): void {
+    const history = loadHistory();
+    
+    if (history.length === 0) {
+      historySection.classList.add('hidden');
+      historyEmpty.classList.remove('hidden');
+      historyList.innerHTML = '';
+      return;
+    }
+
+    historySection.classList.remove('hidden');
+    historyEmpty.classList.add('hidden');
+    
+    historyList.innerHTML = history.map(item => `
+      <div class="flex gap-4 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+        <img src="${item.image}" alt="历史图片" class="w-16 h-16 rounded-lg object-cover flex-shrink-0 cursor-pointer" onclick="viewHistoryImage('${item.id}')" />
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs text-gray-500">${item.time}</span>
+            <button onclick="deleteHistoryItem('${item.id}')" class="text-red-400 hover:text-red-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-sm text-gray-700 line-clamp-2 cursor-pointer" onclick="viewHistoryResult('${item.id}')">${item.result.substring(0, 100)}${item.result.length > 100 ? '...' : ''}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  (window as any).viewHistoryImage = function(id: string) {
+    const history = loadHistory();
+    const item = history.find(h => h.id === id);
+    if (item) {
+      // Show image preview
+      const preview = window.open('', '_blank');
+      if (preview) {
+        preview.document.write(`
+          <html>
+            <head><title>历史图片</title></head>
+            <body style="margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f5f5;">
+              <img src="${item.image}" style="max-width:90%;max-height:90%;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.2);" />
+            </body>
+          </html>
+        `);
+      }
+    }
+  };
+
+  (window as any).viewHistoryResult = function(id: string) {
+    const history = loadHistory();
+    const item = history.find(h => h.id === id);
+    if (item) {
+      // Show result in modal
+      const modal = window.open('', '_blank', 'width=600,height=400');
+      if (modal) {
+        modal.document.write(`
+          <html>
+            <head>
+              <title>识别结果</title>
+              <style>
+                body { font-family: -apple-system, sans-serif; padding: 20px; line-height: 1.8; white-space: pre-wrap; }
+              </style>
+            </head>
+            <body>${item.result}</body>
+          </html>
+        `);
+      }
+    }
+  };
+
+  (window as any).deleteHistoryItem = function(id: string) {
+    const history = loadHistory().filter(h => h.id !== id);
+    saveHistory(history);
+    renderHistory();
+  };
+
+  clearHistoryBtn.addEventListener('click', () => {
+    if (confirm('确定要清空所有历史记录吗？')) {
+      saveHistory([]);
+      renderHistory();
+    }
+  });
+
+  // Update performIdentification to save history
+  const originalPerform = performIdentification;
+  performIdentification = async function(imageBase64: string): Promise<void> {
+    let result = '';
+    const tempResultText = document.getElementById('resultText') as HTMLDivElement;
+    
+    // Override result text update to capture result
+    const observer = new MutationObserver(() => {
+      result = tempResultText.textContent || '';
+    });
+    observer.observe(tempResultText, { childList: true, characterData: true });
+    
+    await originalPerform(imageBase64);
+    observer.disconnect();
+    
+    // Save to history when identification is complete
+    if (result) {
+      addToHistory(imageBase64, result);
+    }
+  };
+
+  // Load history on init
+  renderHistory();
 }
