@@ -5,7 +5,7 @@
     "nixpacks": {
       "aptPackages": ["nodejs", "npm"],
       "env": {
-        "NPM_CONFIG_PNPM": "true"
+        "NODE_VERSION": "20"
       }
     }
   },
