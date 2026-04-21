@@ -389,24 +389,6 @@ function initUploadLogic(): void {
 
   async function searchNearbyStores(lat: number, lng: number): Promise<void> {
     try {
-      // Use Tencent LBS API (free tier available)
-      // First, convert to Tencent coordinates (GCJ-02 is compatible)
-      const radius = 5000; // 5km radius
-      const keywords = '农资店,农药,化肥,种子,农业用品';
-      
-      // Using AMap (高德地图) API - requires API key
-      // For demo, we'll use a mock response or public API
-      const url = `https://restapi.amap.com/v3/place/around?key=YOUR_AMAP_KEY&location=${lng},${lat}&keywords=${encodeURIComponent(keywords)}&radius=${radius}&offset=10&page=1&extensions=all`;
-      
-      // Since we don't have a real API key, we'll use browser's native capabilities
-      // or provide instructions for the user
-      
-      // Alternative: Use Google Maps Places API (also requires key)
-      // Or use Tencent Map LBS API
-      
-      // For now, show a message explaining the user needs an API key
-      // Or we can try to use the browser's geolocation to open maps directly
-      
       hideStoreLoading();
       findStoreBtn.disabled = false;
       findStoreText.textContent = '定位并查找附近农资店';
@@ -416,19 +398,13 @@ function initUploadLogic(): void {
       storeList.innerHTML = `
         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
           <p class="text-sm text-yellow-800 font-medium mb-2">提示：</p>
-          <p class="text-sm text-yellow-700 mb-2">将为您在地图上搜索附近的农资店...</p>
+          <p class="text-sm text-yellow-700 mb-2">将为您在高德地图搜索附近的农资店...</p>
           <div class="space-y-2 mt-3">
-            <a href="https://lbs.qq.com/tool/component-geolocation.html" target="_blank" class="block px-3 py-2 bg-blue-500 text-white rounded text-sm text-center hover:bg-blue-600">
-              在腾讯地图查看附近农资店
-            </a>
             <a href="https://uri.amap.com/search?keyword=农资店&center=${lng},${lat}&zoom=14" target="_blank" class="block px-3 py-2 bg-green-500 text-white rounded text-sm text-center hover:bg-green-600">
               在高德地图查看附近农资店
             </a>
-            <a href="https://www.google.com/maps/search/%E5%86%9C%E8%B5%90%E5%BA%97/@${lat},${lng},15z" target="_blank" class="block px-3 py-2 bg-red-500 text-white rounded text-sm text-center hover:bg-red-600">
-              在Google地图查看附近农资店
-            </a>
           </div>
-          <p class="text-xs text-gray-500 mt-3">点击上方链接在对应地图应用中查看附近的农资店位置</p>
+          <p class="text-xs text-gray-500 mt-3">点击上方链接在高德地图应用中查看附近的农资店位置</p>
         </div>
       `;
       
