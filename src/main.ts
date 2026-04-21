@@ -9,15 +9,15 @@ export function initApp(): void {
   app.innerHTML = `
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50 py-8 px-4">
       <div class="max-w-4xl mx-auto">
-        <!-- Header with School Logo -->
+        <!-- Header with Logo -->
         <header class="text-center mb-8">
           <div class="flex items-center justify-center gap-4 mb-4">
-            <img src="/images/school-logo.jpg" alt="校徽" class="w-16 h-16 rounded-full shadow-lg object-contain bg-white p-1" />
+            <img src="/images/platform-logo.jpg" alt="Logo" class="w-16 h-16 rounded-full shadow-lg object-contain bg-white p-1" />
             <div>
               <h1 class="text-3xl font-bold text-blue-800">
-                病虫害AI识别系统
+                智慧三农服务平台
               </h1>
-              <p class="text-sm text-blue-600">枝江市职业教育中心·宜昌技师学院</p>
+              <p class="text-sm text-blue-600">病虫害AI识别系统</p>
             </div>
           </div>
           <p class="text-gray-600">上传植物叶片或植株图片，AI智能识别病虫害</p>
@@ -127,7 +127,7 @@ export function initApp(): void {
 
         <!-- Footer -->
         <footer class="mt-8 text-center text-sm text-gray-500">
-          <p>枝江市职业教育中心·宜昌技师学院</p>
+          <p>智慧三农服务平台</p>
           <p class="mt-1">© 2024 版权所有</p>
         </footer>
       </div>
