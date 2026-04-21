@@ -7,13 +7,19 @@ export function initApp(): void {
   }
 
   app.innerHTML = `
-    <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-8 px-4">
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50 py-8 px-4">
       <div class="max-w-4xl mx-auto">
-        <!-- Header -->
+        <!-- Header with School Logo -->
         <header class="text-center mb-8">
-          <h1 class="text-4xl font-bold text-green-800 mb-2">
-            病虫害AI识别系统
-          </h1>
+          <div class="flex items-center justify-center gap-4 mb-4">
+            <img src="/images/school-logo.jpg" alt="校徽" class="w-16 h-16 rounded-full shadow-lg object-contain bg-white p-1" />
+            <div>
+              <h1 class="text-3xl font-bold text-blue-800">
+                病虫害AI识别系统
+              </h1>
+              <p class="text-sm text-blue-600">枝江市职业教育中心·宜昌技师学院</p>
+            </div>
+          </div>
           <p class="text-gray-600">上传植物叶片或植株图片，AI智能识别病虫害</p>
         </header>
 
@@ -21,12 +27,12 @@ export function initApp(): void {
         <div class="grid md:grid-cols-2 gap-8">
           <!-- Upload Section -->
           <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">上传图片</h2>
+            <h2 class="text-xl font-semibold text-blue-800 mb-4">上传图片</h2>
             
             <!-- Upload Area -->
-            <div id="uploadArea" class="border-2 border-dashed border-green-300 rounded-xl p-8 text-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition-all duration-300 mb-4">
+            <div id="uploadArea" class="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 mb-4">
               <div id="uploadPlaceholder">
-                <svg class="w-16 h-16 mx-auto text-green-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-16 h-16 mx-auto text-blue-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <p class="text-gray-600 mb-2">点击或拖拽图片到此处</p>
@@ -45,7 +51,7 @@ export function initApp(): void {
             <input type="file" id="fileInput" accept="image/*" class="hidden" />
 
             <!-- Identify Button -->
-            <button id="identifyBtn" disabled class="w-full py-3 px-6 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center gap-2">
+            <button id="identifyBtn" disabled class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center gap-2">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
@@ -55,7 +61,7 @@ export function initApp(): void {
 
           <!-- Result Section -->
           <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">识别结果</h2>
+            <h2 class="text-xl font-semibold text-blue-800 mb-4">识别结果</h2>
             
             <div id="resultPlaceholder" class="h-64 flex items-center justify-center text-gray-400">
               <div class="text-center">
@@ -69,7 +75,7 @@ export function initApp(): void {
             <!-- Loading State -->
             <div id="loadingState" class="hidden">
               <div class="flex flex-col items-center justify-center h-64">
-                <div class="animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent mb-4"></div>
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-4"></div>
                 <p class="text-gray-600">AI 正在分析中...</p>
               </div>
             </div>
@@ -124,6 +130,12 @@ export function initApp(): void {
             <li>建议使用自然光或均匀照明</li>
           </ul>
         </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-center text-sm text-gray-500">
+          <p>枝江市职业教育中心·宜昌技师学院</p>
+          <p class="mt-1">© 2024 版权所有</p>
+        </footer>
       </div>
     </div>
   `;
