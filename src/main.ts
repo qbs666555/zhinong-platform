@@ -15,9 +15,9 @@ export function initApp(): void {
             <img src="/images/platform-logo.jpg" alt="Logo" class="w-16 h-16 rounded-full shadow-lg object-contain bg-white p-1" />
             <div>
               <h1 class="text-3xl font-bold text-blue-800">
-                智慧三农服务平台
+                病虫害AI识别系统
               </h1>
-              <p class="text-sm text-blue-600">病虫害AI识别系统</p>
+              <p class="text-sm text-blue-600">枝江市职业教育中心·宜昌技师学院</p>
             </div>
           </div>
           <p class="text-gray-600">上传植物叶片或植株图片，AI智能识别病虫害</p>
@@ -127,7 +127,7 @@ export function initApp(): void {
 
         <!-- Footer -->
         <footer class="mt-8 text-center text-sm text-gray-500">
-          <p>智慧三农服务平台</p>
+          <p>枝江市职业教育中心·宜昌技师学院</p>
           <p class="mt-1">© 2024 版权所有</p>
         </footer>
       </div>
