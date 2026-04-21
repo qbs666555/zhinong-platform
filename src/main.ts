@@ -14,31 +14,30 @@ export function initApp(): void {
           <!-- Logo区域 -->
           <div class="flex flex-col items-center gap-6 mb-6">
             <!-- 高级Logo展示 -->
-            <div class="relative">
+            <div class="relative group">
               <!-- 外围光晕效果 -->
-              <div class="absolute -inset-4 bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 rounded-full blur-2xl opacity-40 animate-pulse"></div>
-              <div class="absolute -inset-2 bg-gradient-to-br from-emerald-400 to-green-600 rounded-full blur-xl opacity-30"></div>
-              <!-- Logo主体 -->
-              <div class="relative w-40 h-40 rounded-full shadow-2xl overflow-hidden ring-8 ring-white bg-gradient-to-br from-emerald-100 to-green-50 flex items-center justify-center">
+              <div class="absolute -inset-6 bg-gradient-to-br from-emerald-300 via-green-400 to-teal-500 rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
+              <!-- 内层光晕 -->
+              <div class="absolute -inset-3 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full blur-2xl opacity-30"></div>
+              <!-- Logo主体 - 简洁圆形 -->
+              <div class="relative w-44 h-44 rounded-full shadow-2xl overflow-hidden ring-4 ring-white/80 bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center backdrop-blur-sm">
                 <img 
                   src="/images/platform-logo.jpg" 
                   alt="智慧三农" 
-                  class="w-36 h-36 object-cover rounded-full"
+                  class="w-40 h-40 object-cover"
                 />
               </div>
-              <!-- 底部装饰线 -->
-              <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent rounded-full"></div>
             </div>
             
             <!-- 标题区域 -->
             <div class="text-center">
-              <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 via-emerald-500 to-teal-600 bg-clip-text text-transparent mb-3 tracking-tight">
+              <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-700 via-emerald-600 to-teal-600 bg-clip-text text-transparent mb-3 tracking-tight drop-shadow-sm">
                 智慧三农服务平台
               </h1>
-              <div class="flex items-center justify-center gap-3">
-                <span class="h-px w-16 bg-gradient-to-r from-transparent to-emerald-400"></span>
-                <p class="text-lg text-gray-600 font-medium">AI智能病虫害识别系统</p>
-                <span class="h-px w-16 bg-gradient-to-l from-transparent to-emerald-400"></span>
+              <div class="flex items-center justify-center gap-4">
+                <span class="h-px w-20 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></span>
+                <p class="text-lg text-gray-600 font-medium">AI智能病虫害识别</p>
+                <span class="h-px w-20 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></span>
               </div>
             </div>
           </div>
