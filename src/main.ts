@@ -105,7 +105,32 @@ export function initApp(): void {
                     </svg>
                     1688搜索
                   </button>
+                  <button id="searchAlibaba" class="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M4.833 8.09c-.935 0-1.75.428-2.263 1.09l-.31.397v5.823l.31.398c.513.661 1.328 1.09 2.263 1.09h11.334c.935 0 1.75-.429 2.263-1.09l.31-.398v-5.823l-.31-.397c-.513-.662-1.328-1.09-2.263-1.09H4.833zm0 2.18h11.334c.467 0 .875.214 1.132.544l.31.398v5.823l-.31.397c-.257.33-.665.544-1.132.544H4.833c-.467 0-.875-.214-1.132-.544l-.31-.397v-5.823l.31-.398c.257-.33.665-.544 1.132-.544z"/>
+                    </svg>
+                    1688搜索
+                  </button>
                 </div>
+              </div>
+
+              <!-- Agri-Store Location Section -->
+              <div id="storeSection" class="hidden border-t pt-4 mt-4">
+                <p class="text-sm text-gray-600 mb-3">查找附近农资店：</p>
+                <button id="findStoreBtn" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span id="findStoreText">定位并查找附近农资店</span>
+                </button>
+                <div id="storeLoading" class="hidden mt-3 text-center">
+                  <div class="animate-spin rounded-full h-8 w-8 border-4 border-green-500 border-t-transparent mx-auto mb-2"></div>
+                  <p class="text-sm text-gray-600">正在定位...</p>
+                </div>
+                <div id="storeList" class="hidden mt-3 space-y-2 max-h-60 overflow-y-auto"></div>
+                <p id="storeError" class="hidden mt-3 text-sm text-red-500"></p>
+                <p id="locationInfo" class="hidden mt-2 text-xs text-gray-500"></p>
               </div>
             </div>
 
@@ -330,6 +355,7 @@ function initUploadLogic(): void {
 
     // Hide search section while processing
     searchSection.classList.add('hidden');
+    storeSection.classList.add('hidden');
 
     // Use SSE for streaming
     const reader = response.body?.getReader();
@@ -372,5 +398,130 @@ function initUploadLogic(): void {
     }
     // Show search section when complete
     searchSection.classList.remove('hidden');
+    // Show store section
+    storeSection.classList.remove('hidden');
+  }
+
+  // Agri-store location functionality
+  const storeSection = document.getElementById('storeSection') as HTMLDivElement;
+  const findStoreBtn = document.getElementById('findStoreBtn') as HTMLButtonElement;
+  const findStoreText = document.getElementById('findStoreText') as HTMLSpanElement;
+  const storeLoading = document.getElementById('storeLoading') as HTMLDivElement;
+  const storeList = document.getElementById('storeList') as HTMLDivElement;
+  const storeError = document.getElementById('storeError') as HTMLParagraphElement;
+  const locationInfo = document.getElementById('locationInfo') as HTMLParagraphElement;
+
+  // Find nearby stores
+  findStoreBtn.addEventListener('click', async () => {
+    if (!navigator.geolocation) {
+      showStoreError('您的浏览器不支持定位功能');
+      return;
+    }
+
+    findStoreBtn.disabled = true;
+    findStoreText.textContent = '定位中...';
+    storeLoading.classList.remove('hidden');
+    storeError.classList.add('hidden');
+    storeList.classList.add('hidden');
+    locationInfo.classList.add('hidden');
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        locationInfo.textContent = `当前位置：${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        locationInfo.classList.remove('hidden');
+        
+        await searchNearbyStores(lat, lng);
+      },
+      (error) => {
+        hideStoreLoading();
+        findStoreBtn.disabled = false;
+        findStoreText.textContent = '定位并查找附近农资店';
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            showStoreError('定位权限被拒绝，请在浏览器设置中允许定位');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            showStoreError('无法获取位置信息');
+            break;
+          case error.TIMEOUT:
+            showStoreError('定位请求超时');
+            break;
+          default:
+            showStoreError('定位失败，请重试');
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000
+      }
+    );
+  });
+
+  async function searchNearbyStores(lat: number, lng: number): Promise<void> {
+    try {
+      // Use Tencent LBS API (free tier available)
+      // First, convert to Tencent coordinates (GCJ-02 is compatible)
+      const radius = 5000; // 5km radius
+      const keywords = '农资店,农药,化肥,种子,农业用品';
+      
+      // Using AMap (高德地图) API - requires API key
+      // For demo, we'll use a mock response or public API
+      const url = `https://restapi.amap.com/v3/place/around?key=YOUR_AMAP_KEY&location=${lng},${lat}&keywords=${encodeURIComponent(keywords)}&radius=${radius}&offset=10&page=1&extensions=all`;
+      
+      // Since we don't have a real API key, we'll use browser's native capabilities
+      // or provide instructions for the user
+      
+      // Alternative: Use Google Maps Places API (also requires key)
+      // Or use Tencent Map LBS API
+      
+      // For now, show a message explaining the user needs an API key
+      // Or we can try to use the browser's geolocation to open maps directly
+      
+      hideStoreLoading();
+      findStoreBtn.disabled = false;
+      findStoreText.textContent = '定位并查找附近农资店';
+      
+      // Show instructions for the user
+      storeList.classList.remove('hidden');
+      storeList.innerHTML = `
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+          <p class="text-sm text-yellow-800 font-medium mb-2">提示：</p>
+          <p class="text-sm text-yellow-700 mb-2">将为您在地图上搜索附近的农资店...</p>
+          <div class="space-y-2 mt-3">
+            <a href="https://lbs.qq.com/tool/component-geolocation.html" target="_blank" class="block px-3 py-2 bg-blue-500 text-white rounded text-sm text-center hover:bg-blue-600">
+              在腾讯地图查看附近农资店
+            </a>
+            <a href="https://uri.amap.com/search?keyword=农资店&center=${lng},${lat}&zoom=14" target="_blank" class="block px-3 py-2 bg-green-500 text-white rounded text-sm text-center hover:bg-green-600">
+              在高德地图查看附近农资店
+            </a>
+            <a href="https://www.google.com/maps/search/%E5%86%9C%E8%B5%90%E5%BA%97/@${lat},${lng},15z" target="_blank" class="block px-3 py-2 bg-red-500 text-white rounded text-sm text-center hover:bg-red-600">
+              在Google地图查看附近农资店
+            </a>
+          </div>
+          <p class="text-xs text-gray-500 mt-3">点击上方链接在对应地图应用中查看附近的农资店位置</p>
+        </div>
+      `;
+      
+    } catch (error) {
+      hideStoreLoading();
+      findStoreBtn.disabled = false;
+      findStoreText.textContent = '定位并查找附近农资店';
+      showStoreError('搜索失败，请重试');
+    }
+  }
+
+  function showStoreError(message: string): void {
+    storeError.textContent = message;
+    storeError.classList.remove('hidden');
+    storeList.classList.add('hidden');
+  }
+
+  function hideStoreLoading(): void {
+    storeLoading.classList.add('hidden');
   }
 }
