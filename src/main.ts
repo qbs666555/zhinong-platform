@@ -7,32 +7,69 @@ export function initApp(): void {
   }
 
   app.innerHTML = `
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50 py-8 px-4">
-      <div class="max-w-4xl mx-auto">
-        <!-- Header with Logo -->
-        <header class="text-center mb-8">
-          <div class="flex items-center justify-center gap-4 mb-4">
-            <img src="/images/platform-logo.jpg" alt="Logo" class="w-16 h-16 rounded-full shadow-lg object-contain bg-white p-1" />
-            <div>
-              <h1 class="text-3xl font-bold text-blue-800">
-                病虫害AI识别系统
+    <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-8 px-4">
+      <div class="max-w-5xl mx-auto">
+        <!-- Header - 智慧三农服务平台 -->
+        <header class="text-center mb-10">
+          <!-- Logo区域 -->
+          <div class="flex flex-col items-center gap-6 mb-6">
+            <div class="relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 rounded-3xl blur-xl opacity-30 scale-110"></div>
+              <img 
+                src="/images/platform-logo.jpg" 
+                alt="智慧三农" 
+                class="relative w-32 h-32 rounded-2xl shadow-2xl object-cover ring-4 ring-white"
+                style="background: linear-gradient(135deg, #10b981, #059669);"
+              />
+            </div>
+            
+            <!-- 标题区域 -->
+            <div class="text-center">
+              <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 via-emerald-500 to-teal-600 bg-clip-text text-transparent mb-3">
+                智慧三农服务平台
               </h1>
-              <p class="text-sm text-blue-600">枝江市职业教育中心·宜昌技师学院</p>
+              <div class="flex items-center justify-center gap-3">
+                <span class="h-px w-12 bg-gradient-to-r from-transparent to-emerald-400"></span>
+                <p class="text-lg text-gray-600 font-medium">AI智能病虫害识别系统</p>
+                <span class="h-px w-12 bg-gradient-to-l from-transparent to-emerald-400"></span>
+              </div>
             </div>
           </div>
-          <p class="text-gray-600">上传植物叶片或植株图片，AI智能识别病虫害</p>
+          
+          <!-- 装饰性标语 -->
+          <div class="flex items-center justify-center gap-2 text-sm text-emerald-600 mt-4">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>智能识别</span>
+            <span class="mx-2">|</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>精准防治</span>
+            <span class="mx-2">|</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>科技助农</span>
+          </div>
         </header>
 
         <!-- Main Content -->
         <div class="grid md:grid-cols-2 gap-8">
           <!-- Upload Section -->
           <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h2 class="text-xl font-semibold text-blue-800 mb-4">上传图片</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              上传图片
+            </h2>
             
             <!-- Upload Area -->
-            <div id="uploadArea" class="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 mb-4">
+            <div id="uploadArea" class="border-2 border-dashed border-emerald-300 rounded-2xl p-10 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-all duration-300 mb-6">
               <div id="uploadPlaceholder">
-                <svg class="w-16 h-16 mx-auto text-blue-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-20 h-20 mx-auto text-emerald-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <p class="text-gray-600 mb-2">点击或拖拽图片到此处</p>
@@ -51,7 +88,7 @@ export function initApp(): void {
             <input type="file" id="fileInput" accept="image/*" class="hidden" />
 
             <!-- Identify Button -->
-            <button id="identifyBtn" disabled class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center gap-2">
+            <button id="identifyBtn" disabled class="w-full py-4 px-6 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl hover:from-emerald-600 hover:to-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-3 text-lg shadow-lg hover:shadow-xl">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
@@ -61,7 +98,12 @@ export function initApp(): void {
 
           <!-- Result Section -->
           <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h2 class="text-xl font-semibold text-blue-800 mb-4">识别结果</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              识别结果
+            </h2>
             
             <div id="resultPlaceholder" class="h-64 flex items-center justify-center text-gray-400">
               <div class="text-center">
@@ -75,7 +117,7 @@ export function initApp(): void {
             <!-- Loading State -->
             <div id="loadingState" class="hidden">
               <div class="flex flex-col items-center justify-center h-64">
-                <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-4"></div>
+                <div class="animate-spin rounded-full h-14 w-14 border-4 border-emerald-500 border-t-transparent mb-4 shadow-lg"></div>
                 <p class="text-gray-600">AI 正在分析中...</p>
               </div>
             </div>
@@ -116,19 +158,40 @@ export function initApp(): void {
         </div>
 
         <!-- Tips -->
-        <div class="mt-8 bg-blue-50 rounded-xl p-4">
-          <h3 class="font-semibold text-blue-800 mb-2">识别小贴士</h3>
-          <ul class="text-sm text-blue-700 space-y-1">
-            <li>上传清晰的植物叶片或植株照片效果更佳</li>
-            <li>确保图片中有明显的病虫害特征</li>
-            <li>建议使用自然光或均匀照明</li>
-          </ul>
+        <div class="mt-10 bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-emerald-800 mb-2 text-lg">识别小贴士</h3>
+              <ul class="text-emerald-700 space-y-2 text-sm">
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                  上传清晰的植物叶片或植株照片效果更佳
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                  确保图片中有明显的病虫害特征
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                  建议使用自然光或均匀照明
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <!-- Footer -->
-        <footer class="mt-8 text-center text-sm text-gray-500">
-          <p>枝江市职业教育中心·宜昌技师学院</p>
-          <p class="mt-1">© 2024 版权所有</p>
+        <footer class="mt-12 text-center">
+          <div class="flex items-center justify-center gap-2 mb-3">
+            <img src="/images/platform-logo.jpg" alt="Logo" class="w-8 h-8 rounded-lg" />
+            <span class="font-semibold text-gray-700">智慧三农服务平台</span>
+          </div>
+          <p class="text-sm text-gray-500">© 2024 科技赋能农业 智慧服务三农</p>
         </footer>
       </div>
     </div>
